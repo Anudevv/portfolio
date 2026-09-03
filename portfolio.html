@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anudev — Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0E1416;
+    --panel: #141C1F;
+    --panel-2: #182124;
+    --grid: #1F2A2E;
+    --line: #2A363B;
+    --blue: #5B9BD5;
+    --blue-dim: #3C6E93;
+    --amber: #E8C468;
+    --text: #E6ECEC;
+    --text-muted: #8A9BA0;
+    --text-faint: #566468;
+    --radius: 2px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px) 0 0 / 48px 48px,
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0 / 48px 48px,
+      var(--bg);
+    color:var(--text);
+    font-family:'IBM Plex Sans', sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;}
+  .mono{font-family:'IBM Plex Mono', monospace;}
+  .display{font-family:'Space Grotesk', sans-serif;}
+
+  /* focus visibility */
+  a:focus-visible, button:focus-visible{outline:2px solid var(--amber); outline-offset:3px;}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:.001ms !important; transition-duration:.001ms !important;}
+  }
+
+  /* ===== corner ticks — reused "sheet" motif ===== */
+  .sheet{
+    position:relative;
+    border:1px solid var(--line);
+    background:var(--panel);
+  }
+  .sheet::before, .sheet::after,
+  .sheet .tick-br, .sheet .tick-tr{
+    content:"";
+    position:absolute;
+    width:10px; height:10px;
+    border-color:var(--blue-dim);
+  }
+  .sheet::before{ top:-1px; left:-1px; border-top:2px solid var(--blue-dim); border-left:2px solid var(--blue-dim);}
+  .sheet::after{ bottom:-1px; right:-1px; border-bottom:2px solid var(--blue-dim); border-right:2px solid var(--blue-dim);}
+
+  /* ===== nav ===== */
+  header{
+    position:sticky; top:0; z-index:50;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 6vw;
+    background:rgba(14,20,22,0.88);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);
+  }
+  .brand{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:18px; letter-spacing:.02em;}
+  .brand span{color:var(--blue);}
+  nav ul{list-style:none; display:flex; gap:32px;}
+  nav a{
+    font-family:'IBM Plex Mono', monospace; font-size:12px; letter-spacing:.08em;
+    text-transform:uppercase; text-decoration:none; color:var(--text-muted);
+    transition:color .2s ease;
+  }
+  nav a:hover{color:var(--blue);}
+  .nav-toggle{display:none;}
+
+  /* ===== hero ===== */
+  .hero{
+    padding:90px 6vw 60px;
+    display:grid; grid-template-columns:1fr;
+    gap:28px;
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace; font-size:12px; letter-spacing:.12em;
+    color:var(--blue); text-transform:uppercase; display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{content:""; width:26px; height:1px; background:var(--blue-dim);}
+  h1.hero-title{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:600;
+    font-size:clamp(38px, 6.4vw, 84px);
+    line-height:1.02;
+    letter-spacing:-.01em;
+    max-width:16ch;
+  }
+  .hero-title .accent{color:var(--blue);}
+  .hero-sub{
+    max-width:56ch;
+    color:var(--text-muted);
+    font-size:17px;
+  }
+  .hero-meta{
+    display:flex; flex-wrap:wrap; gap:14px;
+    margin-top:8px;
+  }
+  .tag{
+    font-family:'IBM Plex Mono', monospace; font-size:11.5px; letter-spacing:.04em;
+    padding:6px 10px; border:1px solid var(--line); color:var(--text-muted);
+    background:var(--panel-2);
+  }
+  .cta-row{display:flex; gap:14px; margin-top:18px; flex-wrap:wrap;}
+  .btn{
+    font-family:'IBM Plex Mono', monospace; font-size:12.5px; letter-spacing:.05em;
+    padding:13px 22px; text-decoration:none; text-transform:uppercase;
+    border:1px solid var(--line); transition:all .2s ease;
+    display:inline-flex; align-items:center; gap:8px;
+  }
+  .btn-primary{background:var(--blue); color:#0E1416; border-color:var(--blue); font-weight:600;}
+  .btn-primary:hover{background:#78adde;}
+  .btn-ghost{color:var(--text); }
+  .btn-ghost:hover{border-color:var(--blue); color:var(--blue);}
+
+  /* section shell */
+  section{padding:70px 6vw;}
+  .section-head{
+    display:flex; align-items:baseline; gap:14px; margin-bottom:34px;
+    border-bottom:1px solid var(--line); padding-bottom:16px;
+  }
+  .section-num{font-family:'IBM Plex Mono',monospace; color:var(--blue-dim); font-size:13px;}
+  .section-title{font-family:'Space Grotesk',sans-serif; font-size:26px; font-weight:600;}
+  .section-note{margin-left:auto; font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--text-faint); text-transform:uppercase; letter-spacing:.06em;}
+
+  /* about */
+  .about-grid{display:grid; grid-template-columns: 1.3fr 1fr; gap:48px;}
+  .about-text p{color:var(--text-muted); margin-bottom:16px; max-width:62ch;}
+  .about-text strong{color:var(--text); font-weight:500;}
+  .stat-panel{padding:22px; display:flex; flex-direction:column; gap:18px;}
+  .stat{display:flex; justify-content:space-between; align-items:center; border-bottom:1px dashed var(--line); padding-bottom:12px;}
+  .stat:last-child{border-bottom:none; padding-bottom:0;}
+  .stat-label{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--text-faint); text-transform:uppercase; letter-spacing:.06em;}
+  .stat-value{font-family:'Space Grotesk',sans-serif; font-size:15px; color:var(--text);}
+
+  /* coursework — data tag grid */
+  .course-grid{
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(280px,1fr)); gap:14px;
+  }
+  .course-card{padding:0; display:flex; flex-direction:column;}
+  .course-card-top{padding:20px 20px 18px;}
+  .course-card-head{display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:22px;}
+  .course-badges{display:flex; flex-direction:column; align-items:flex-end; gap:6px;}
+  .badge{
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.04em;
+    padding:4px 9px; border:1px solid var(--line); color:var(--text-muted); white-space:nowrap;
+  }
+  .badge-core{background:var(--blue-dim); border-color:var(--blue-dim); color:#0E1416; font-weight:600;}
+  .course-code{font-family:'IBM Plex Mono',monospace; color:var(--blue); font-size:12.5px; letter-spacing:.06em; text-transform:uppercase;}
+  .course-name{font-family:'Space Grotesk',sans-serif; font-size:16.5px; font-weight:600; margin-top:8px; line-height:1.3;}
+  .course-units{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--text-faint);
+    margin-top:14px; display:flex; align-items:center; gap:6px;
+  }
+  .course-resources{
+    margin-top:auto;
+    border-top:1px solid var(--line);
+    padding:14px 20px;
+    display:flex; justify-content:space-between; align-items:center;
+    font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--text-muted);
+    text-decoration:none; letter-spacing:.03em;
+    transition:color .2s ease;
+  }
+  .course-resources:hover{color:var(--blue);}
+
+  /* projects */
+  .project-list{display:flex; flex-direction:column; gap:1px; background:var(--line);}
+  .project-row{
+    background:var(--bg);
+    display:grid;
+    grid-template-columns: 90px 1fr auto;
+    gap:24px;
+    align-items:center;
+    padding:26px 22px;
+    text-decoration:none;
+    transition:background .2s ease;
+    position:relative;
+  }
+  .project-row:hover{background:var(--panel-2);}
+  .project-row:hover .project-title{color:var(--blue);}
+  .project-index{font-family:'IBM Plex Mono',monospace; color:var(--text-faint); font-size:13px;}
+  .project-title{font-family:'Space Grotesk',sans-serif; font-size:19px; font-weight:600; transition:color .2s ease; margin-bottom:6px;}
+  .project-desc{color:var(--text-muted); font-size:14px; max-width:60ch;}
+  .project-stack{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;}
+  .project-stack span{font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--text-faint); border:1px solid var(--line); padding:3px 7px;}
+  .project-arrow{font-family:'IBM Plex Mono',monospace; color:var(--blue-dim); font-size:20px;}
+
+  /* skills */
+  .skills-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1px; background:var(--line);}
+  .skill-cell{background:var(--bg); padding:20px; }
+  .skill-cat{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--blue-dim); text-transform:uppercase; letter-spacing:.08em; margin-bottom:10px;}
+  .skill-items{color:var(--text-muted); font-size:14px; line-height:1.9;}
+
+  /* contact / title block */
+  .titleblock{
+    margin:0 6vw 60px;
+    border:1px solid var(--line);
+    background:var(--panel);
+  }
+  .tb-top{
+    display:grid; grid-template-columns: 1.4fr 1fr 1fr;
+    border-bottom:1px solid var(--line);
+  }
+  .tb-cell{padding:22px 24px; border-right:1px solid var(--line);}
+  .tb-cell:last-child{border-right:none;}
+  .tb-label{font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--text-faint); text-transform:uppercase; letter-spacing:.08em; margin-bottom:8px;}
+  .tb-value{font-family:'Space Grotesk',sans-serif; font-size:15px;}
+  .tb-value a{text-decoration:none; border-bottom:1px solid var(--blue-dim); color:var(--text);}
+  .tb-value a:hover{color:var(--blue);}
+  .tb-bottom{display:flex; justify-content:space-between; padding:14px 24px; font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--text-faint); letter-spacing:.05em;}
+
+  footer{padding:26px 6vw; text-align:center; color:var(--text-faint); font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.05em;}
+
+  /* reveal-on-scroll */
+  .reveal{opacity:0; transform:translateY(14px); transition:opacity .6s ease, transform .6s ease;}
+  .reveal.in{opacity:1; transform:translateY(0);}
+
+  @media (max-width: 860px){
+    .about-grid{grid-template-columns:1fr;}
+    .tb-top{grid-template-columns:1fr;}
+    .tb-cell{border-right:none; border-bottom:1px solid var(--line);}
+    .project-row{grid-template-columns:40px 1fr; }
+    .project-arrow{display:none;}
+    nav ul{display:none;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">ANUDEV<span>.</span></div>
+  <nav>
+    <ul>
+      <li><a href="#about">About</a></li>
+      <li><a href="#coursework">Coursework</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="eyebrow">Rev. 01 — Academic Portfolio</div>
+  <h1 class="hero-title">Anudev<br>building things and studies <span class="accent">how systems work.</span></h1>
+  <p class="hero-sub">First-year Computer Science &amp; Engineering student at Lovely Professional University, Punjab. Currently working through software engineering, databases, and the math underneath both.</p>
+  <div class="hero-meta">
+    <div class="tag">CSE · LPU</div>
+    <div class="tag">Punjab, India</div>
+    <div class="tag">Year 01</div>
+  </div>
+  <div class="cta-row">
+    <a class="btn btn-primary" href="#projects">View Projects</a>
+    <a class="btn btn-ghost" href="#contact">Get in Touch</a>
+  </div>
+</section>
+
+<section id="about">
+  <div class="section-head">
+    <span class="section-num mono">01</span>
+    <h2 class="section-title">About</h2>
+    <span class="section-note">Profile</span>
+  </div>
+  <div class="about-grid reveal">
+    <div class="about-text">
+      <p>I'm a first-year <strong>CSE</strong> student at <strong>LPU</strong>, spending most of my time on programming fundamentals, engineering math, and the early groundwork of software engineering and databases. This site is a running log of coursework and the projects I build alongside it.</p>
+      <p>Edit this section with your own story — what pulled you into CS, what you're curious about right now, and what kind of work you want to be doing next. Placeholder projects below are ready to be swapped for the real thing.</p>
+    </div>
+    <div class="stat-panel sheet">
+      <div class="stat"><span class="stat-label">Institution</span><span class="stat-value">LPU, Punjab</span></div>
+      <div class="stat"><span class="stat-label">Program</span><span class="stat-value">B.Tech CSE</span></div>
+      <div class="stat"><span class="stat-label">Standing</span><span class="stat-value">Year 1</span></div>
+      <div class="stat"><span class="stat-label">Focus</span><span class="stat-value">Software &amp; Systems</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="coursework">
+  <div class="section-head">
+    <span class="section-num mono">02</span>
+    <h2 class="section-title">Coursework</h2>
+    <span class="section-note">Current Semester</span>
+  </div>
+  <div class="course-grid reveal">
+    <div class="course-card sheet">
+      <div class="course-card-top">
+        <div class="course-card-head">
+          <div class="course-code">CSE202</div>
+          <div class="course-badges"><span class="badge">4 Credits</span><span class="badge badge-core">Core</span></div>
+        </div>
+        <div class="course-name">Object Oriented Programming</div>
+        <div class="course-units">6 Units</div>
+      </div>
+      <a class="course-resources" href="#">View Resources <span>→</span></a>
+    </div>
+    <div class="course-card sheet">
+      <div class="course-card-top">
+        <div class="course-card-head">
+          <div class="course-code">CSE205</div>
+          <div class="course-badges"><span class="badge">4 Credits</span><span class="badge badge-core">Core</span></div>
+        </div>
+        <div class="course-name">Data Structures and Algorithms</div>
+        <div class="course-units">6 Units</div>
+      </div>
+      <a class="course-resources" href="#">View Resources <span>→</span></a>
+    </div>
+    <div class="course-card sheet">
+      <div class="course-card-top">
+        <div class="course-card-head">
+          <div class="course-code">CSE306</div>
+          <div class="course-badges"><span class="badge">3 Credits</span><span class="badge badge-core">Core</span></div>
+        </div>
+        <div class="course-name">Computer Networks</div>
+        <div class="course-units">6 Units</div>
+      </div>
+      <a class="course-resources" href="#">View Resources <span>→</span></a>
+    </div>
+    <div class="course-card sheet">
+      <div class="course-card-top">
+        <div class="course-card-head">
+          <div class="course-code">CSE423</div>
+          <div class="course-badges"><span class="badge">3 Credits</span><span class="badge badge-core">Core</span></div>
+        </div>
+        <div class="course-name">Virtualization and Cloud Computing</div>
+        <div class="course-units">6 Units</div>
+      </div>
+      <a class="course-resources" href="#">View Resources <span>→</span></a>
+    </div>
+    <div class="course-card sheet">
+      <div class="course-card-top">
+        <div class="course-card-head">
+          <div class="course-code">INT335</div>
+          <div class="course-badges"><span class="badge">2 Credits</span><span class="badge badge-core">Core</span></div>
+        </div>
+        <div class="course-name">Design Thinking</div>
+        <div class="course-units">6 Units</div>
+      </div>
+      <a class="course-resources" href="#">View Resources <span>→</span></a>
+    </div>
+    <div class="course-card sheet">
+      <div class="course-card-top">
+        <div class="course-card-head">
+          <div class="course-code">MTH401</div>
+          <div class="course-badges"><span class="badge">4 Credits</span><span class="badge badge-core">Core</span></div>
+        </div>
+        <div class="course-name">Discrete Mathematics</div>
+        <div class="course-units">6 Units</div>
+      </div>
+      <a class="course-resources" href="#">View Resources <span>→</span></a>
+    </div>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="section-head">
+    <span class="section-num mono">03</span>
+    <h2 class="section-title">Projects</h2>
+    <span class="section-note">Selected Work</span>
+  </div>
+  <div class="project-list reveal">
+    <a class="project-row" href="#">
+      <span class="project-index mono">01</span>
+      <div>
+        <div class="project-title">Automatic People Counter</div>
+        <div class="project-desc">An automatic people-counting system built with Arduino, IR sensors, and a digital display — detects entries and exits in real time and maintains an accurate live count of people in a given area.</div>
+        <div class="project-stack"><span>Arduino</span><span>Arduino IDE</span><span>IR Sensors</span><span>Embedded C</span></div>
+      </div>
+      <span class="project-arrow">→</span>
+    </a>
+  </div>
+</section>
+
+<section id="skills">
+  <div class="section-head">
+    <span class="section-num mono">04</span>
+    <h2 class="section-title">Skills</h2>
+    <span class="section-note">Toolkit</span>
+  </div>
+  <div class="skills-grid reveal">
+    <div class="skill-cell">
+      <div class="skill-cat">Languages</div>
+      <div class="skill-items">C / C++<br>Python<br>Java (learning)</div>
+    </div>
+    <div class="skill-cell">
+      <div class="skill-cat">Foundations</div>
+      <div class="skill-items">Data Structures<br>OOP Basics<br>Discrete Math</div>
+    </div>
+    <div class="skill-cell">
+      <div class="skill-cat">Tools</div>
+      <div class="skill-items">Git / GitHub<br>VS Code<br>Linux basics</div>
+    </div>
+    <div class="skill-cell">
+      <div class="skill-cat">In Progress</div>
+      <div class="skill-items">SQL / DBMS<br>Software Design<br>Web Basics</div>
+    </div>
+  </div>
+</section>
+
+<section id="contact" style="padding-bottom:0;">
+  <div class="section-head">
+    <span class="section-num mono">05</span>
+    <h2 class="section-title">Contact</h2>
+    <span class="section-note">Sheet 01 of 01</span>
+  </div>
+</section>
+
+<div class="titleblock reveal">
+  <div class="tb-top">
+    <div class="tb-cell">
+      <div class="tb-label">Name</div>
+      <div class="tb-value">Anudev C Aneesh</div>
+    </div>
+    <div class="tb-cell">
+      <div class="tb-label">Email</div>
+      <div class="tb-value"><a href="mailto:adev17479@gmail.com">adev17479@gmail.com</a></div>
+    </div>
+    <div class="tb-cell">
+      <div class="tb-label">Elsewhere</div>
+      <div class="tb-value"><a href="https://github.com/Anudevv" target="_blank" rel="noopener">GitHub</a> &nbsp;/&nbsp; <a href="https://www.linkedin.com/in/anudevcaneesh27/" target="_blank" rel="noopener">LinkedIn</a></div>
+    </div>
+  </div>
+  <div class="tb-bottom">
+    <span>LPU · PUNJAB, IN</span>
+    <span>DRAWN 2026</span>
+  </div>
+</div>
+
+<footer>Built as a starting point — replace the placeholders, ship it.</footer>
+
+<script>
+  const els = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
+  }, {threshold:0.15});
+  els.forEach(el=>io.observe(el));
+</script>
+
+</body>
+</html>
